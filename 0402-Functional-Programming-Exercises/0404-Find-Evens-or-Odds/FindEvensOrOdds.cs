@@ -5,11 +5,10 @@ class FindEvensOrOdds
 {
     static void Main()
     {
-        Predicate<int> oddFinder = delegate (int x) { return x % 2 == 1; };
-        Predicate<string> oddQuery = delegate (string x) { return x == "odd"; };
+        Predicate<int> oddFinder = delegate (int x) { return x % 2 == 1 || x % 2 == -1; };
 
-        Func<string, int[]> parseString = x => 
-                x.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+        Func<string, int[]> parseString = x =>
+                x.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(int.Parse).ToArray();
 
         var range = parseString(Console.ReadLine());
@@ -22,12 +21,20 @@ class FindEvensOrOdds
         {
             int currentNum = downRange + i;
 
-            if (oddQuery(command) == true && oddFinder(currentNum) == true)
-                Console.Write($"{currentNum} ");
-
-            else if (oddQuery(command) == false && oddFinder(currentNum) == false)
-                Console.Write($"{currentNum} ");
-                    }
+            switch (command)
+            {
+                case "odd":
+                    if (oddFinder(currentNum))
+                        Console.Write($"{currentNum} ");
+                    break;
+                case "even":
+                    if (!oddFinder(currentNum))
+                        Console.Write($"{currentNum} ");
+                    break;
+                default:
+                    break;
+            }
+        }
         Console.WriteLine();
     }
 }
