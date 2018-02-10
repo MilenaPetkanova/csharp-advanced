@@ -7,15 +7,11 @@ class DangerousFloor
     {
         char[][] board = new char[8][];
 
-        for (int i = 0; i < 8; i++)
+        for (int row = 0; row < 8; row++)
         {
-            board[i] = new char[8];
-
-            var line = Console.ReadLine();
-            for (int j = 0; j < line.Length; j += 2)
-            {
-                board[i][j / 2] = line.ElementAt(j);
-            }
+            board[row] = new char[8];
+            board[row] = Console.ReadLine().Split(',')
+                .Select(char.Parse).ToArray();
         }
 
         var command = string.Empty;
