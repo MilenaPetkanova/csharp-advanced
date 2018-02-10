@@ -7,131 +7,116 @@ class GreedyTimes
     static void Main()
     {
         long bagCapacity = long.Parse(Console.ReadLine());
-        long bagAmount = 0;
 
         var items = Console.ReadLine().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
             .ToArray();
 
-        var bag = new Dictionary<string, Dictionary<string, long>>(StringComparer.OrdinalIgnoreCase);
+        var goldBag = new Dictionary<string, long>(StringComparer.InvariantCultureIgnoreCase);
+        var gemBag = new Dictionary<string, long>(StringComparer.InvariantCultureIgnoreCase);
+        var cashBag = new Dictionary<string, long>(StringComparer.InvariantCultureIgnoreCase);
 
-        var totalAmountByType = new Dictionary<string, long>(StringComparer.OrdinalIgnoreCase);
-        totalAmountByType.Add("Gold", 0);
-        totalAmountByType.Add("Gem", 0);
-        totalAmountByType.Add("Cash", 0);
+        long bagAmount = 0;
+        long goldAmount = 0;
+        long gemAmount = 0;
+        long cashAmount = 0;
 
-        Func<Dictionary<string, long>, bool> firstRule = x => x["Gold"] >= x["Gem"] && x["Gem"] >= x["Cash"];
-        
-Func<long, long, long, bool> capacityRule = (x, y, z) => x >= y + z;
+        Func<long, long, long, bool> firstRule = (gold, gem, cash) => gold >= gem && gem >= cash;
+        Func<long, long, long, bool> capacityRule = (x, y, z) => x >= y + z;
 
-        for (int i = 0; i < items.Length; i+=2)
+        for (int i = 0; i < items.Length; i += 2)
         {
             var item = items[i];
             var quantity = long.Parse(items[i + 1]);
 
             if (capacityRule(bagCapacity, bagAmount, quantity) == false)
-            {
                 continue;
-            }
 
-            if (item.ToLower() == "Gold".ToLower())
+            if (item.ToLower() == "gold")
             {
-                totalAmountByType["Gold"] += quantity;
-                if (firstRule(totalAmountByType) == false)
-                {
-                    totalAmountByType["Gold"] -= quantity;
+                if (firstRule(goldAmount + quantity, gemAmount, cashAmount) == false)
                     continue;
-                }
-                
-                if (!bag.ContainsKey("Gold"))
+
+                if (!goldBag.ContainsKey(item))
                 {
-                    bag.Add("Gold", new Dictionary<string, long>());
-                    bag["Gold"].Add(item, quantity);
+                    goldBag.Add(item, quantity);
                 }
                 else
                 {
-                    if (!bag["Gold"].ContainsKey(item))
-                    {
-                        bag["Gold"].Add(item, quantity);
-                    }
-                    else
-                    {
-                        bag["Gold"][item] += quantity;
-                    }
+                    goldBag[item] += quantity;
                 }
+                goldAmount += quantity;
+                bagAmount += quantity;
             }
 
-            else if (item.ToLower().EndsWith("Gem".ToLower()))
+            else if (item.ToLower().EndsWith("gem"))
             {
-                totalAmountByType["Gem"] += quantity;
-                if (firstRule(totalAmountByType) == false)
-                {
-                    totalAmountByType["Gem"] -= quantity;
+                if (firstRule(goldAmount, gemAmount + quantity, cashAmount) == false)
                     continue;
-                }
 
-                if (!bag.ContainsKey("Gem"))
+                if (!gemBag.ContainsKey(item))
                 {
-                    bag.Add("Gem", new Dictionary<string, long>());
-                    bag["Gem"].Add(item, quantity);
+                    gemBag.Add(item, quantity);
                 }
                 else
                 {
-                    if (!bag["Gem"].ContainsKey(item))
-                    {
-                        bag["Gem"].Add(item, quantity);
-                    }
-                    else
-                    {
-                        bag["Gem"][item] += quantity;
-                    }
+                    gemBag[item] += quantity;
                 }
+                gemAmount += quantity;
+                bagAmount += quantity;
             }
 
             else if (item.Length == 3 && item.All(Char.IsLetter))
             {
-                totalAmountByType["Cash"] += quantity;
-                if (firstRule(totalAmountByType) == false)
-                {
-                    totalAmountByType["Cash"] -= quantity;
+                if (firstRule(goldAmount, gemAmount, cashAmount + quantity) == false)
                     continue;
-                }
 
-                if (!bag.ContainsKey("Cash"))
+                if (!cashBag.ContainsKey(item))
                 {
-                    bag.Add("Cash", new Dictionary<string, long>());
-                    bag["Cash"].Add(item, quantity);
+                    cashBag.Add(item, quantity);
                 }
                 else
                 {
-                    if (!bag["Cash"].ContainsKey(item))
-                    {
-                        bag["Cash"].Add(item, quantity);
-                    }
-                    else
-                    {
-                        bag["Cash"][item] += quantity;
-                    }
+                    cashBag[item] += quantity;
                 }
+                cashAmount += quantity;
+                bagAmount += quantity;
             }
-
-            bagAmount += quantity;
         }
 
+        if (goldBag.Count != 0)
+            Console.WriteLine($"<Gold> ${goldAmount}");
+            PrintGoldBag(goldBag);
 
-        foreach (var type in totalAmountByType.Where(x => x.Value != 0).OrderByDescending(x => x.Value))
+        if (gemBag.Count != 0)
+            Console.WriteLine($"<Gem> ${gemAmount}");
+            PrintGemBag(gemBag);
+
+        if (cashBag.Count != 0)
+            Console.WriteLine($"<Cash> ${cashAmount}");
+            PrintCashBag(cashBag);
+    }
+
+    private static void PrintCashBag(Dictionary<string, long> cashBag)
+    {
+        foreach (var item in cashBag.OrderByDescending(x => x.Key).ThenBy(x => x.Value))
         {
-            Console.WriteLine($"<{type.Key}> ${type.Value}");
+            Console.WriteLine($"##{item.Key} - {item.Value}");
+        }
+    }
 
-            foreach (var selectedType in bag.Where(x => x.Key == type.Key))
-            {
-                var itemsDict = selectedType.Value
-                    .OrderByDescending(x => x.Key).ThenBy(x => x.Value);
+    private static void PrintGemBag(Dictionary<string, long> gemBag)
+    {
+        foreach (var item in gemBag.OrderByDescending(x => x.Key).ThenBy(x => x.Value))
+        {
+            Console.WriteLine($"##{item.Key} - {item.Value}");
+        }
+    }
 
-                foreach (var item in itemsDict)
-                {
-                    Console.WriteLine($"##{item.Key} - {item.Value}");
-                }
-            }
+    private static void PrintGoldBag(Dictionary<string, long> goldBag)
+    {
+        foreach (var item in goldBag.OrderByDescending(x => x.Key).ThenBy(x => x.Value))
+        {
+            Console.WriteLine($"##{item.Key} - {item.Value}");
         }
     }
 }
