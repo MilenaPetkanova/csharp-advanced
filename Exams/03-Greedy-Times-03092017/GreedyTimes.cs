@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+// 90/100
+
 class GreedyTimes
 {
     static void Main()

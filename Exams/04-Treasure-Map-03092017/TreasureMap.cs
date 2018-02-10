@@ -14,6 +14,8 @@ class TreasureMap
             string pattern = @"(#|!)[^#!]*?(?<![a-zA-Z0-9])(?<strName>([a-zA-Z]){4})(?![a-zA-Z0-9])[^#!]*" + 
                 @"(?<!\d)(?<strNumber>(\d{3}))-(?<pass>(\d{4}|\d{6}))(?!\d)[^#!]*?(#|!)";
 
+            //((?<hash>#)|!) в началото и накрая (?(hash)!|#)
+
             var matches = Regex.Matches(input, pattern);
 
             var correctMatch = matches[matches.Count / 2];
