@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-class Program
+class CryptoBlockchain.cs
 {
     static void Main()
     {

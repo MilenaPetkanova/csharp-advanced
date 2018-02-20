@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-class departmentPatients
+class Hospitl
 {
     static void Main()
     {
