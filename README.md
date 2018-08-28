@@ -1,7 +1,10 @@
-# csharp-advanced-softuni
-C# Advanced - January 2018
+# C# Advanced - January 2018
 
-ToDo:
-- More information in this file
-- Exams/03-Jedi-Code-X - 20/100
-- Exams/04-Jedi-Dreams - 80/100 
+[Certificate](https://softuni.bg/certificates/details/51474/f3f04803)
+
+## Course Topics:
+
+- Stacks and Queues
+- Matrices
+- Streams
+- Functional Programming
